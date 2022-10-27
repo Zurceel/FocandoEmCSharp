@@ -1,6 +1,8 @@
 ﻿using CSharpDevagram.Dto;
 using CSharpDevagram.Models;
+using CSharpDevagram.Repository;
 using CSharpDevagram.Services;
+using CSharpDevagram.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,10 +15,12 @@ namespace CSharpDevagram.Controllers
 	{
 
 		private readonly ILogger<LoginController> _logger;
+		private readonly IUsuarioRepository _usuarioRepository;
 
-		public LoginController(ILogger<LoginController> logger)
+		public LoginController(ILogger<LoginController> logger, IUsuarioRepository usuarioRepository)
 		{
 			_logger = logger;
+			_usuarioRepository = usuarioRepository;
 		}
 
 		[HttpPost]
@@ -29,20 +33,11 @@ namespace CSharpDevagram.Controllers
 				if(!String.IsNullOrEmpty(loginrequisicao.Email) && !String.IsNullOrEmpty(loginrequisicao.Senha) && 
 					!String.IsNullOrWhiteSpace(loginrequisicao.Email) && !String.IsNullOrWhiteSpace(loginrequisicao.Senha))
 				{
-					string email = "gabriel@gmail.com";
-					string senha = "Senha123";
 
-					if(loginrequisicao.Email == email && loginrequisicao.Senha == senha)
+					Usuario usuario = _usuarioRepository.GetUsuarioPorLoginSenha(loginrequisicao.Email.ToLower(), Md5Utils.GerarHashMD5(loginrequisicao.Senha));
+
+					if(usuario != null)
 					{
-
-						Usuario usuario = new Usuario()
-						{
-							Email = loginrequisicao.Email,
-							Id = 123,
-							Nome = "Gabriel da Cruz"
-						};
-
-
 						return Ok(new LoginRespostaDto()
 						{
 							Email = usuario.Email,

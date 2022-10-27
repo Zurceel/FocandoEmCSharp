@@ -1,4 +1,5 @@
 ﻿using CSharpDevagram.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace CSharpDevagram.Repository.Impl
 {
@@ -9,6 +10,11 @@ namespace CSharpDevagram.Repository.Impl
 		public UsuarioRepositoryImpl (DevagramContext context)
 		{
 			_context = context;
+		}
+
+		public Usuario GetUsuarioPorLoginSenha(string email, string senha)
+		{
+			return _context.Usuarios.FirstOrDefault(u => u.Email == email && u.Senha == senha);
 		}
 
 		public void Salvar(Usuario usuario)

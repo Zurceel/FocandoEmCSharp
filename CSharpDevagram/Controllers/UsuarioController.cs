@@ -48,7 +48,6 @@ namespace CSharpDevagram.Controllers
 
 		[HttpPost]
 		[AllowAnonymous]
-
 		public IActionResult CadastrarUsuario([FromBody] Usuario usuario)
 		{
 			try
@@ -101,7 +100,7 @@ namespace CSharpDevagram.Controllers
 
 				}
 
-				return Ok(usuario);
+				return Ok("Usuário cadastrado com sucesso!");
 			}
 			catch(Exception ex)
 			{
