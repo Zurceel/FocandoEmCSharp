@@ -13,12 +13,11 @@ namespace CSharpDevagram.Controllers
 	public class UsuarioController : BaseController
 	{
 		private readonly ILogger<UsuarioController> _logger;
-		private readonly IUsuarioRepository _usuariorepository;
 
-		public UsuarioController(ILogger<UsuarioController> logger, IUsuarioRepository usuarioRepository)
+		public UsuarioController(ILogger<UsuarioController> logger, 
+			IUsuarioRepository usuarioRepository) : base(usuarioRepository)
 		{
 			_logger = logger;
-			_usuariorepository = usuarioRepository;
 		}
 
 		[HttpGet]
@@ -26,21 +25,20 @@ namespace CSharpDevagram.Controllers
 		{
 			try
 			{
-				Usuario usuario = new Usuario()
-				{
-					Email = "gabriel@gmail.com",
-					Nome = "Gabriel da Cruz",
-					Id = 100
-				};
+				Usuario usuario = LerToken();
 
-				return Ok(usuario);
+				return Ok( new UsuarioRespostaDto
+				{
+					Nome = usuario.Nome,
+					Email = usuario.Email
+				});
 			}
 			catch (Exception ex)
 			{
-				_logger.LogError("Ocorreu um ao obter o usuário: " + ex.Message);
+				_logger.LogError("Ocorreu um ao obter o usuário: ");
 				return StatusCode(StatusCodes.Status500InternalServerError, new ErrorRespostaDto()
 				{
-					Descricao = "Ocorreu um ao obter o usuário",
+					Descricao = "Ocorreu um ao obter o usuário" + ex.Message,
 					Status = StatusCodes.Status500InternalServerError
 				});
 			}
@@ -95,9 +93,6 @@ namespace CSharpDevagram.Controllers
 							Descricao = "Usuário já esta cadastrado!"
 						});
 					}
-
-					_usuariorepository.Salvar(usuario);
-
 				}
 
 				return Ok("Usuário cadastrado com sucesso!");
